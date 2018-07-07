@@ -1,0 +1,75 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
+
+public class UnetSprite : NetworkBehaviour {
+
+    private SpriteRenderer sp;
+
+    //[SyncVar] private Color _color;
+
+    private void Awake()
+    {
+        sp = GetComponent<SpriteRenderer>();
+    }
+
+    private void Update()
+    {
+        if (isLocalPlayer)
+        {
+            if (Input.GetKey(KeyCode.J))
+            {
+                CmdInput(Color.blue);
+            }
+            else if (Input.GetKey(KeyCode.K))
+            {
+                CmdInput(Color.red);
+            }
+            else
+            {
+                CmdInput(Color.white);
+            }
+        }
+    }
+
+    [Command]
+    private void CmdInput(Color color)
+    {
+        gameObject.GetComponent<UnetSprite>().RpcColor(color);
+    }
+
+    [ClientRpc]
+    private void RpcColor(Color color)
+    {
+        sp.color = color;
+    }
+
+    /*
+    [Command]
+    private void CmdInput()
+    {
+        gameObject.GetComponent<UnetSprite>().RpcChangeColor();
+    }
+
+    [ClientRpc]
+    private void RpcChangeColor()
+    {
+        if (isServer)
+        {
+            if (Input.GetKey(KeyCode.J))
+            {
+                sp.color = Color.blue;
+            }
+            else if (Input.GetKey(KeyCode.K))
+            {
+                sp.color = Color.red;
+            }
+            else
+            {
+                sp.color = Color.green;
+            }
+        }
+    }
+    */
+}
