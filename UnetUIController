@@ -1,0 +1,54 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Networking;
+
+public class UnetUIController : NetworkBehaviour {
+
+    private InputField fil;
+
+    private void Start()
+    {
+        OffLine();
+    }
+
+    public void OffLine()
+    {
+        GameObject.Find("StartHost").GetComponent<Button>().onClick.AddListener(StartHost);
+        GameObject.Find("StartConnect").GetComponent<Button>().onClick.AddListener(StartClient);
+    }
+
+    public void OnLine()
+    {
+        GameObject.Find("StopHost").GetComponent<Button>().onClick.AddListener(StopHost);
+    }
+
+    public void StartHost()
+    {
+        NetworkManager.singleton.StartHost();
+    }
+
+    public void StartClient()
+    {
+        NetworkManager.singleton.networkAddress = GameObject.Find("Ip").GetComponent<InputField>().text;
+        NetworkManager.singleton.StartClient();
+    }
+
+    public void StopHost()
+    {
+        NetworkManager.singleton.StopHost();
+    }
+
+    public void OnLevelWasLoaded(int level)
+    {
+        if (level == 0)
+        {
+            OffLine();
+        }
+        else if (level == 1)
+        {
+            OnLine();
+        }
+    }
+}
