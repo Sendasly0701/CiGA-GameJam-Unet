@@ -1,0 +1,163 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
+
+public class CharacterContral : NetworkBehaviour
+{
+    [HideInInspector]
+    public bool IsContral=true;
+    [HideInInspector]
+    public bool isflood = true;
+
+    public bool IsP2=false;
+
+    public Sprite ss;
+     public Sprite ss2;
+
+    //public bool IsMagnet_N = true;
+    [Header("速度")]
+    public float Speed = 100;
+    private float t_right;
+
+        
+    private SpriteRenderer sr;
+    [SyncVar] private Color uColor;
+
+    private MagenetedObject mo;
+
+    private Rigidbody2D r2d;
+
+    private Text ipText;
+    // Use this for initialization
+    void Awake ()
+    {
+        sr = GetComponent<SpriteRenderer>();  
+        mo = GetComponent<MagenetedObject>();
+        r2d = GetComponent<Rigidbody2D>();
+        ipText = GameObject.Find("GameIP").GetComponent<Text>();
+    }
+
+    private void Start()
+    {
+        if (isLocalPlayer)
+        {
+            GameObject.Find("Main Camera").GetComponent<CameraFollow>().target = gameObject.transform;
+        }
+
+        ipText.text = Network.player.ipAddress;
+    }
+
+    // Update is called once per frame
+    void FixedUpdate ()
+	{   
+        if (isLocalPlayer)
+        {
+            CheckInput();
+            
+        }
+	}
+
+    private void CheckInput()
+    {
+        if (!IsP2)
+        {       
+            t_right = (Input.GetKey(KeyCode.D) ? 1 : 0) - (Input.GetKey(KeyCode.A) ? 1 : 0);
+            if (t_right != 0)
+            {
+                transform.Translate(t_right * Speed * Time.fixedDeltaTime, 0, 0);
+            }
+
+            if ((Input.GetKey(KeyCode.J) || Input.GetKey(KeyCode.K)) && !(Input.GetKey(KeyCode.J) && Input.GetKey(KeyCode.K)))
+            {
+                if (Input.GetKey(KeyCode.J))
+                {
+                    
+                    Debug.Log("11");
+                    //sr.sprite = ss2;
+                    mo.maganet = MagenetedObject.Maganet.N;
+                }
+                else if (Input.GetKey(KeyCode.K))
+                {
+                    //uColor = Color.red;                   
+                   // sr.sprite = ss;
+                    mo.maganet = MagenetedObject.Maganet.S;
+
+                }
+            }
+            else
+            {
+                //uColor = Color.white;
+                mo.maganet = MagenetedObject.Maganet.None;
+            }
+            //Rpc_UColor();
+        }
+    }
+
+    /*
+    [ClientRpc]
+    private void Rpc_UColor()
+    {
+        if (Input.GetKey(KeyCode.J))
+        {
+            sr.sprite = ss;
+        }
+        else if (Input.GetKey(KeyCode.K))
+        {
+            sr.sprite = ss2;
+        }
+        else
+        {
+            
+        }
+        
+    }
+    
+    /*
+    [Command]
+    private void Cmd_SynPlayer(float t_right, int temp)
+    {
+        
+
+        if(temp == 1)
+        {
+                 
+        }else if(temp == 2)
+        {
+            sr.color = Color.red;         
+            
+        }
+        else if(temp == 3)
+        {
+           
+        }
+    }
+    
+ 
+    [Command]
+    private void CmdChangeColor()
+    {
+
+        if (_switchJ)
+        {
+            //sr.color = Color.blue;
+            
+            color = new Color(0, 0, 255);
+            GetComponent<Renderer>().material.color = color;
+        }
+        else if (_switchK)
+        {
+            //sr.color = Color.red;
+            color = new Color(255, 0, 0);
+            GetComponent<Renderer>().material.color = color;
+        }
+        else
+        {
+            //sr.color = Color.white;
+            color = new Color(255, 255, 255);
+            GetComponent<Renderer>().material.color = color;
+        }
+    }
+    */
+}
